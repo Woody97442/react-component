@@ -17,6 +17,6 @@ export async function getCategories() {
 
 export async function getSubCategories() {
     const SubCategorie = await client.fetch(`*[_type == "sub-categories"]
-    {name,href,"refCat":Categories->name}`)
+    {name,href,"refCat":categories->name}`)
     return SubCategorie
 }
