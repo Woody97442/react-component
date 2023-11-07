@@ -1,36 +1,25 @@
-import { useEffect, useState } from "react";
-import { getCategories, getSubCategories } from "./sanity";
-import Category from "./models/Category";
+import { Key, useEffect, useState } from "react";
+import { getFrameWork } from "./sanity";
+// import { useAppDispatch, useAppSelector } from "./app/hooks";
+// import { getAllFramework } from "./features/framework/frameworkSlice";
 
 function App() {
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
+  const [framework, setFramework] = useState([]);
   const [categoryStates, setCategoryStates] = useState<{
     [key: number]: boolean;
   }>({});
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const allCategories = await getCategories();
-      setCategories(allCategories);
-
-      // Initialize category states
-      const initialCategoryStates: { [key: number]: boolean } = {};
-      allCategories.forEach((index: number) => {
-        initialCategoryStates[index] = false;
-      });
-      setCategoryStates(initialCategoryStates);
-    };
-    fetchCategories();
-  }, []);
+  // const allFrameWork = useAppSelector((state) => state.framework.allFrameWork);
+  // const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const fetchSubCategories = async () => {
-      const subCategories = await getSubCategories();
-      setSubCategories(subCategories);
-      console.log(subCategories);
+    const fetchFramework = async () => {
+      const request = await getFrameWork();
+      setFramework(request);
+      // console.log(request);
     };
-    fetchSubCategories();
+    fetchFramework();
+    // dispatch(getAllFramework(allFrameWork));
   }, []);
 
   function showSubMuen(index: number) {
@@ -58,41 +47,34 @@ function App() {
               <i className="fas fa-house"></i>Home
             </a>
           </li>
-          {categories.map((category: Category, index) => {
+          {framework.map((menu: any, categoryIndex) => {
             return (
-              <li key={index} className="categories">
+              <li key={categoryIndex} className="categories">
                 <a
-                  href={category.href}
+                  href="#"
                   onClick={() => {
-                    showSubMuen(index);
+                    showSubMuen(categoryIndex);
                   }}
                 >
                   <i className="fas fa-stream"></i>
-                  {category.name}
+                  {menu.name}
                   <span className="fas fa-caret-down"></span>
                 </a>
                 <ul
                   className={
-                    "list-submenu " + (categoryStates[index] ? "show" : "")
+                    "list-submenu " +
+                    (categoryStates[categoryIndex] ? "show" : "")
                   }
                 >
-                  {subCategories
-                    .filter((subCategories: any) => {
-                      if (subCategories.refCat === category.name) {
-                        return subCategories;
-                      } else {
-                        return 0;
-                      }
-                    })
-                    .map((subCat: any, index) => {
+                  {menu.categories.map(
+                    (subMenu: any, subMenuIndex: Key | null | undefined) => {
                       return (
-                        <>
-                          <li key={index}>
-                            <a href="#">{subCat.name}</a>
-                          </li>
-                        </>
+                        <li key={subMenuIndex}>
+                          <a href={subMenu.url}>{subMenu.name}</a>
+                        </li>
                       );
-                    })}
+                    }
+                  )}
                 </ul>
               </li>
             );
